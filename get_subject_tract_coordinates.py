@@ -146,7 +146,6 @@ def convert_vtk_to_trk(path, anatFile, outPath=None):
         outPath = srcPath
 
     outFile = os.path.join(outPath, basename + '.trk')
-    import pdb; pdb.set_trace()
     cmd = ['TractConverter.py',
            '-i', path,
            '-o', outFile,
