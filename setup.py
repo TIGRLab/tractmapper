@@ -4,4 +4,5 @@ setup(name='tractmapper',
       description="Map DTI tract atlas to subject space and extract biber coordinates",
       author="Tom Wright",
       author_email="tom@maladmin.com",
-      py_modules=['get_subject_tract_coordinates', 'parse_mrml'])
+      py_modules=['get_subject_tract_coordinates', 'parse_mrml', 'tempdir'],
+      scripts=['get_subject_tract_coordinates.py', 'parse_mrml.py'])
