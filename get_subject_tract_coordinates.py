@@ -5,15 +5,10 @@ Transforms a DTI atlas to subject space and returns streamlines coordinates
     associated with tracts.
 
 Usage:
-    get_subject_tract_coordinates.py [options] <atlasFile> <clusterDir> <mrmlFile> <subjectFile>
-    get_subject_tract_coordinates.py [options] <atlasFile> <clusterDir> <mrmlFile> <subjectFile> <anatFile>
+    get_subject_tract_coordinates.py [options] <subjectFile>
+    get_subject_tract_coordinates.py [options] <subjectFile> <anatFile>
 
 Arguments:
-    <atlasFile>     Full path to a tractography atlas
-    <clusterDir>    Full path to a directory containing the fiber
-                         clusters from the atlas
-    <mrmlFile>      Full path to a mrml (Slicer) file mapping the clusters
-                         to tracts
     <subjectFile>   Full path to a tractography file
     <anatFile>      Full path to the subject nifti format DTI file
 
@@ -25,9 +20,15 @@ Options:
     --debug                         Extra logging information
     --quiet                         Only log errors
     --mirtk_file=<file>             Path to the MIRTK singularity container
-                                    [default: /archive/code/containers/MIRTK/MIRTK.img]
+                                    [default: MIRTK.img]
     --work_dir=<dir>                Where to create intermediate files.
     --output=<output>               Path to the output file
+    --atlas_file=<atlas_file>       Path to a tractography atlas file (vtp or vtk)
+                                    [default: ../data/clustered_whole_brain.vtp]
+    --cluster_dir=<cluster_dir>     Path to a folder containing the atlas tract clusters
+                                    [default: ../data/clusters/]
+    --mrml_file=<mrml_file>         Path to the atlas mrml (Slicer) file mapping clusters to tracts
+                                    [default: ../data/clustered_tracts_display_100_percent_aem.mrml]
 
 Returns:
     A json object with the start and end coordinates of fibers organised
@@ -43,6 +44,9 @@ Dependencies:
     Path can be specified
         MIRTK.img                   -   singularity container
 
+Details:
+    --atlas_file, --cluster_dir or --mrml_file can be specified. If a relative
+    path is provided it is interpreted relative to __file__
 """
 import os
 import subprocess
@@ -473,9 +477,9 @@ def main(atlas_fibers, atlas_clusters, cluster_pattern,
 
 if __name__ == "__main__":
     arguments = docopt(__doc__)
-    atlasFile = arguments['<atlasFile>']
-    clusterDir = arguments['<clusterDir>']
-    mrmlFile = arguments['<mrmlFile>']
+    atlasFile = arguments['--atlas_file']
+    clusterDir = arguments['--cluster_dir']
+    mrmlFile = arguments['--mrml_file']
     subjectFile = arguments['<subjectFile>']
     workingDir = arguments['--work_dir']
     anatFile = arguments['<anatFile>']
@@ -496,6 +500,14 @@ if __name__ == "__main__":
         logger.setLevel(logging.ERROR)
     else:
         logger.setLevel(logging.INFO)
+
+    script_dir = os.path.dirname(__file__)
+    if not os.path.isabs(atlasFile):
+        atlasFile = os.path.abspath(os.path.join(script_dir, atlasFile))
+    if not os.path.isabs(clusterDir):
+        clusterDir = os.path.abspath(os.path.join(script_dir, clusterDir))
+    if not os.path.isabs(mrmlFile):
+        mrmlFile = os.path.abspath(os.path.join(script_dir, mrmlFile))
 
     if workingDir:
         ends = main(atlasFile,
