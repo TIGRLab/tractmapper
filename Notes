@@ -1,0 +1,34 @@
+Amys tractography scripts
+  /projects/amy/training/tractSOP/scripts
+    1. Slicer_Tractography.sh
+      Run DTIPrep, Create subject fibers
+    2. wma.sh
+      Create tract atlas, perform clusting
+    3. wma_applyToSubject.sh
+      Register subjects to atlas space _need to reverse this step_
+
+Process:
+  Register atlas (step_2_outputs/atlas.vtp) to subject space (step_2_inputs/XXX_SlicerTractography.vtk)
+    wm_register_to_atlas_new.py
+  Convert registered atlases (.vtk) to .trk
+  Extract streamlines from registered .trk
+    https://gist.github.com/MarcCote/9550783
+  Identify which streamlines belong to which tract
+    Tract membership defined in .mrml file
+
+
+
+
+
+
+
+# convert .vtk to .vtp (and others)
+docker run --rm --volume=/home/twright/data/vtp:/data biomedia/mirtk convert-pointset /data/atlas.vtp /data/atlas.vtk
+input
+Input point set file (.vtk, .vtp, .vtu, .stl, .ply, .off, .dfs, .obj).
+output
+Output point set file (.vtk, .vtp, .vtu, .stl, .ply, .off, .dfs, .node, .poly, .smesh).
+
+
+# Convert to .trk
+TractConverter.py -i ~/data/vtp/atlas.vtk -o atlas.trk -a /archive/data/SPINS/data/nii/SPN01_CMH_0117_01/SPN01_CMH_0117_01_01_DTI60-1000_15_Ax-DTI-60plus5-20iso.nii.gz -f
