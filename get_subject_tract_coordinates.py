@@ -24,11 +24,11 @@ Options:
     --work_dir=<dir>                Where to create intermediate files.
     --output=<output>               Path to the output file
     --atlas_file=<atlas_file>       Path to a tractography atlas file (vtp or vtk)
-                                    [default: ../data/clustered_whole_brain.vtp]
+                                    [default: ./data/clustered_whole_brain.vtp]
     --cluster_dir=<cluster_dir>     Path to a folder containing the atlas tract clusters
-                                    [default: ../data/clusters/]
+                                    [default: ./data/clusters/]
     --mrml_file=<mrml_file>         Path to the atlas mrml (Slicer) file mapping clusters to tracts
-                                    [default: ../data/clustered_tracts_display_100_percent_aem.mrml]
+                                    [default: ./data/clustered_tracts_display_100_percent_aem.mrml]
 
 Returns:
     A json object with the start and end coordinates of fibers organised
@@ -258,7 +258,6 @@ def convert_clusters_to_streams(clusterDir,
     clusters = [os.path.splitext(os.path.basename(f))[0]
                 for f in clusters]
     clusters = set(clusters)
-
     p = re.compile(pattern)
     clusters = [f for f in clusters if p.match(f)]
 
@@ -299,14 +298,12 @@ def match_fibers_to_clusters(fiber_streams, cluster_streams):
 
     logger.info('{} streams in {} clusters.'.format(len(cluster_streams_flat),
                                                     len(cluster_streams)))
-
     for i, stream in enumerate(fiber_streams):
         logger.info('Searching for fiber:{}'.format(i))
         idx = [np.array_equal(stream, cluster_stream)
                for cluster_stream in cluster_streams_flat].index(True)
 
         matches[i] = cluster_labels_flat[idx]
-
     # for i, stream in enumerate(fiber_streams):
     #     logger.info('Searching for fiber:{}'.format(i))
     #     for key, cluster in cluster_streams.iteritems():
